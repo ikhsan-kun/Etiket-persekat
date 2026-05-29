@@ -3,7 +3,7 @@
 @section('title', 'Jadwal Pertandingan')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="padding-top: 7rem;">
     <!-- Header -->
     <div class="mb-12">
         <h1 class="text-4xl font-black font-display text-white mb-4">Jadwal <span class="text-primary-500">Pertandingan</span></h1>

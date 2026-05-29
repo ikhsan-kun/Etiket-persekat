@@ -16,10 +16,20 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $totalRevenue = Order::paid()->sum('total_amount');
+        $totalRevenue     = Order::paid()->sum('total_amount');
+        $revenueThisMonth = Order::paid()
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('total_amount');
+
         $totalTicketsSold = DB::table('ticket_categories')->sum('sold');
+        $totalQuota       = DB::table('ticket_categories')->sum('quota');
+
         $totalOrders = Order::count();
-        $pendingOrders = Order::where('status', 'pending')->count();
+        $paidOrders  = Order::where('status', 'paid')->count();
+
+        $pendingOrders  = Order::where('status', 'pending')->count();
+        $ticketsScanned = DB::table('e_tickets')->where('is_used', true)->count();
 
         // Upcoming match with tickets info
         $upcomingMatches = FootballMatch::with('ticketCategories')
@@ -48,9 +58,13 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', compact(
             'totalRevenue',
+            'revenueThisMonth',
             'totalTicketsSold',
+            'totalQuota',
             'totalOrders',
+            'paidOrders',
             'pendingOrders',
+            'ticketsScanned',
             'upcomingMatches',
             'recentOrders',
             'revenueByMatch'

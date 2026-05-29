@@ -86,7 +86,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Gate Validator
     Route::get('/gate', [GateController::class, 'index'])->name('gate.index');
-    Route::post('/gate/validate', [GateController::class, 'validate'])->name('gate.validate');
+    Route::post('/gate/validate', [GateController::class, 'validateTicket'])->name('gate.validate');
 });
 
 require __DIR__.'/auth.php';

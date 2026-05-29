@@ -3,7 +3,7 @@
 @section('title', 'Checkout - ' . $match->opponent)
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="checkoutForm()">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="padding-top: 7rem;" x-data="checkoutForm()">
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-black font-display text-white mb-2">Pilih Tiket</h1>

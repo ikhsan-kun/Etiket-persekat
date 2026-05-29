@@ -91,7 +91,7 @@ class WebhookController extends Controller
      */
     private function restoreQuota(Order $order): void
     {
-        $order->load('items');
+        $order->load('items.ticketCategory');
 
         foreach ($order->items as $item) {
             $item->ticketCategory->decrement('sold', $item->quantity);
@@ -103,19 +103,19 @@ class WebhookController extends Controller
      */
     private function generateETickets(Order $order): void
     {
-        $order->load('items');
+        $order->load('items.ticketCategory');
 
         foreach ($order->items as $item) {
             for ($i = 0; $i < $item->quantity; $i++) {
                 $ticketCode = ETicket::generateTicketCode();
 
                 ETicket::create([
-                    'order_id' => $order->id,
+                    'order_id'      => $order->id,
                     'order_item_id' => $item->id,
-                    'ticket_code' => $ticketCode,
-                    'qr_code_data' => json_encode([
-                        'code' => $ticketCode,
-                        'order' => $order->order_number,
+                    'ticket_code'   => $ticketCode,
+                    'qr_code_data'  => json_encode([
+                        'code'     => $ticketCode,
+                        'order'    => $order->order_number,
                         'match_id' => $item->ticketCategory->match_id ?? null,
                     ]),
                 ]);

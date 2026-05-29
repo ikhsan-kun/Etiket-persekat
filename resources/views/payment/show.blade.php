@@ -3,7 +3,7 @@
 @section('title', 'Pembayaran')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="padding-top: 7rem;">
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-black font-display text-white mb-2">Pembayaran</h1>
@@ -72,13 +72,22 @@
             <div class="bg-dark-900 border border-dark-800 rounded-3xl p-6 shadow-xl sticky top-24">
                 <h3 class="text-xl font-bold text-white mb-6">Pilih Metode Pembayaran</h3>
                 
-                @if(config('midtrans.server_key'))
+                @if(config('midtrans.server_key') && $order->midtrans_snap_token)
                     <button id="pay-button" class="btn-primary w-full py-4 text-lg mb-4">
                         Bayar Sekarang
                     </button>
                     <p class="text-center text-dark-400 text-sm">
                         Mendukung Virtual Account (BCA, Mandiri, BNI, dll), GoPay, ShopeePay, QRIS, dan Kartu Kredit.
                     </p>
+                @elseif(config('midtrans.server_key') && !$order->midtrans_snap_token)
+                    <div class="bg-warning-500/10 border border-warning-500/20 rounded-xl p-4 mb-6">
+                        <p class="text-warning-400 text-sm">
+                            <strong>Perhatian:</strong> Gagal mendapatkan token pembayaran dari Midtrans. Silakan muat ulang halaman ini.
+                        </p>
+                        <a href="{{ route('payment.show', $order) }}" class="btn-primary w-full py-3 mt-3">
+                            Muat Ulang Halaman
+                        </a>
+                    </div>
                 @else
                     <div class="bg-primary-500/10 border border-primary-500/20 rounded-xl p-4 mb-6">
                         <p class="text-primary-400 text-sm mb-4">
@@ -112,8 +121,9 @@ document.addEventListener('alpine:init', () => {
                 
                 if (distance < 0) {
                     clearInterval(this.interval);
-                    this.timeDisplay = 'EXPIRED';
-                    window.location.reload();
+                    this.timeDisplay = 'KADALUARSA';
+                    // Redirect to payment page so server redirects to my-tickets
+                    window.location.href = "{{ route('payment.show', $order) }}";
                     return;
                 }
                 

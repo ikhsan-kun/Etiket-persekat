@@ -123,4 +123,15 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Ticket Business Rules
+    |--------------------------------------------------------------------------
+    |
+    | Application-specific configuration values for the ticketing system.
+    |
+    */
+    'max_tickets_per_order' => (int) env('MAX_TICKETS_PER_ORDER', 4),
+    'ticket_expiry_minutes' => (int) env('TICKET_EXPIRY_MINUTES', 30),
+
 ];

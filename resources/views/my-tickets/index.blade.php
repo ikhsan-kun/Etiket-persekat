@@ -3,7 +3,7 @@
 @section('title', 'Tiket Saya')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="padding-top: 7rem;">
     <div class="mb-8">
         <h1 class="text-3xl font-black font-display text-white mb-2">Tiket Saya</h1>
         <p class="text-dark-300">Riwayat pemesanan tiket Anda.</p>

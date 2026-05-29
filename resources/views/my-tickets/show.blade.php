@@ -3,7 +3,7 @@
 @section('title', 'Detail Pesanan #' . $order->order_number)
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="padding-top: 7rem;">
     <div class="mb-6">
         <a href="{{ route('my-tickets.index') }}" class="inline-flex items-center text-dark-400 hover:text-white transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

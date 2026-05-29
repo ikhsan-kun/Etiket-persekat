@@ -19,7 +19,7 @@ class GateController extends Controller
     /**
      * Validate a ticket by code.
      */
-    public function validate(Request $request)
+    public function validateTicket(Request $request)
     {
         $request->validate([
             'ticket_code' => 'required|string',
