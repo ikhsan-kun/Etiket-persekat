@@ -8,7 +8,7 @@
 <section class="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
     {{-- Background Image --}}
     <div class="absolute inset-0">
-        <img src="{{ asset('images/stadium_hero.png') }}" alt="Stadion" class="w-full h-full object-cover">
+        <img src="{{ asset('images/gor.jpg') }}" alt="Stadion" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/70 to-dark-950/30"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-dark-950/60 to-transparent"></div>
     </div>
@@ -236,7 +236,7 @@
             <div class="relative hidden lg:block">
                 <div class="absolute -inset-8 bg-primary-600/10 blur-[80px] rounded-full"></div>
                 <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-dark-700/50 group aspect-[4/5]">
-                    <img src="{{ asset('images/player_celebration.png') }}" alt="Pemain Persekat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <img src="{{ asset('images/tim.jpg') }}" alt="Pemain Persekat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-8">
                         <div class="text-white font-black text-xl uppercase tracking-widest mb-1 border-l-4 border-primary-500 pl-4">Laskar Ki Gede Sebayu</div>
@@ -252,7 +252,7 @@
 {{-- ===== CTA SECTION ===== --}}
 <section class="relative py-20 overflow-hidden">
     <div class="absolute inset-0">
-        <img src="{{ asset('images/stadium_hero.png') }}" alt="Stadion" class="w-full h-full object-cover opacity-20">
+        <img src="{{ asset('images/gor.jpg') }}" alt="Stadion" class="w-full h-full object-cover opacity-20">
         <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 to-dark-950/95"></div>
     </div>
     <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

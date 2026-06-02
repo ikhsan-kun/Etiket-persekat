@@ -110,9 +110,10 @@
 function matchForm() {
     return {
         categories: [
-            { name: 'VIP', price: 100000, quota: 100 },
-            { name: 'Tribun Utara', price: 50000, quota: 500 },
-            { name: 'Tribun Selatan', price: 50000, quota: 500 }
+            { name: 'Tribun VIP',     price: 60000, quota: 1000 },
+            { name: 'Tribun Timur',   price: 50000, quota: 1000 },
+            { name: 'Tribun Utara',   price: 35000, quota: 1500 },
+            { name: 'Tribun Selatan', price: 35000, quota: 1500 }
         ],
         addCategory() {
             this.categories.push({ name: '', price: '', quota: '' });

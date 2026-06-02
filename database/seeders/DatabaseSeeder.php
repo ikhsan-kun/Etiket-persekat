@@ -73,34 +73,34 @@ class DatabaseSeeder extends Seeder
             // Create ticket categories for each match
             TicketCategory::create([
                 'match_id' => $match->id,
-                'name' => 'VIP',
-                'price' => 150000,
-                'quota' => 200,
-                'sold' => $match->status === 'finished' ? 180 : 0,
+                'name' => 'Tribun VIP',
+                'price' => 60000,
+                'quota' => 1000,
+                'sold' => $match->status === 'finished' ? 800 : 0,
+            ]);
+
+            TicketCategory::create([
+                'match_id' => $match->id,
+                'name' => 'Tribun Timur',
+                'price' => 50000,
+                'quota' => 1000,
+                'sold' => $match->status === 'finished' ? 700 : 0,
             ]);
 
             TicketCategory::create([
                 'match_id' => $match->id,
                 'name' => 'Tribun Utara',
-                'price' => 75000,
-                'quota' => 500,
-                'sold' => $match->status === 'finished' ? 420 : 0,
+                'price' => 35000,
+                'quota' => 1500,
+                'sold' => $match->status === 'finished' ? 1200 : 0,
             ]);
 
             TicketCategory::create([
                 'match_id' => $match->id,
                 'name' => 'Tribun Selatan',
-                'price' => 75000,
-                'quota' => 500,
-                'sold' => $match->status === 'finished' ? 380 : 0,
-            ]);
-
-            TicketCategory::create([
-                'match_id' => $match->id,
-                'name' => 'Ekonomi',
                 'price' => 35000,
-                'quota' => 1000,
-                'sold' => $match->status === 'finished' ? 850 : 0,
+                'quota' => 1500,
+                'sold' => $match->status === 'finished' ? 1100 : 0,
             ]);
         }
     }

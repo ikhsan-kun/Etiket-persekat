@@ -35,10 +35,17 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'tickets' => 'required|array|min:1',
             'tickets.*.category_id' => 'required|exists:ticket_categories,id',
-            'tickets.*.quantity' => 'required|integer|min:1|max:4',
+            'tickets.*.quantity' => 'required|integer|min:0|max:4',
         ]);
 
-        $totalQuantity = collect($validated['tickets'])->sum('quantity');
+        // Filter out categories with 0 quantity (not selected)
+        $selectedTickets = collect($validated['tickets'])->filter(fn($t) => $t['quantity'] > 0)->values()->all();
+
+        if (empty($selectedTickets)) {
+            return back()->with('error', 'Pilih minimal 1 tiket sebelum melanjutkan.');
+        }
+
+        $totalQuantity = collect($selectedTickets)->sum('quantity');
 
         // Max 4 tickets per order
         if ($totalQuantity > (int) config('app.max_tickets_per_order', 4)) {
@@ -58,6 +65,9 @@ class CheckoutController extends Controller
         if (($existingTickets + $totalQuantity) > 4) {
             return back()->with('error', 'Anda sudah memiliki ' . $existingTickets . ' tiket untuk pertandingan ini. Maksimal 4 tiket per akun.');
         }
+
+        // Use filtered tickets from here on
+        $validated['tickets'] = $selectedTickets;
 
         try {
             $order = DB::transaction(function () use ($validated, $match) {
