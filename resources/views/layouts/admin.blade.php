@@ -30,12 +30,14 @@
                  x-transition:leave="transition-opacity ease-linear duration-300"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-black/60 z-40 lg:hidden">
+                 class="fixed inset-0 bg-black/60 z-40 lg:hidden"
+                 style="display: none;">
             </div>
 
             <!-- Sidebar -->
             <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-                   class="fixed inset-y-0 left-0 z-50 w-64 bg-dark-900 border-r border-dark-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto">
+                   :style="sidebarOpen ? 'transform: translateX(0)' : ''"
+                   class="fixed inset-y-0 left-0 z-50 w-64 bg-dark-900 border-r border-dark-800 transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto">
                 <div class="flex flex-col h-full">
                     <!-- Logo -->
                     <div class="flex items-center gap-3 px-6 py-5 border-b border-dark-800">
@@ -102,8 +104,10 @@
                 <header class="sticky top-0 z-30 bg-dark-950/80 backdrop-blur-xl border-b border-dark-800/50">
                     <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
                         <div class="flex items-center gap-4">
-                            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-dark-400 hover:text-white p-1">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button @click="sidebarOpen = !sidebarOpen" 
+                                    class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-dark-900 border border-dark-800 text-dark-400 hover:text-white transition-all cursor-pointer"
+                                    aria-label="Toggle Sidebar">
+                                <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                                 </svg>
                             </button>

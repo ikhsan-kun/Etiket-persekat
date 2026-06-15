@@ -115,4 +115,49 @@ class ReportController extends Controller
             'Content-Type' => 'text/csv',
         ]);
     }
+
+    /**
+     * Export sales data to print-friendly PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $dateFrom = $request->get('date_from', now()->startOfMonth()->toDateString());
+        $dateTo = $request->get('date_to', now()->toDateString());
+
+        $matchSales = DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('ticket_categories', 'order_items.ticket_category_id', '=', 'ticket_categories.id')
+            ->join('matches', 'ticket_categories.match_id', '=', 'matches.id')
+            ->where('orders.status', 'paid')
+            ->whereBetween('orders.paid_at', [$dateFrom, $dateTo . ' 23:59:59'])
+            ->select(
+                'matches.opponent',
+                'matches.match_date',
+                DB::raw('SUM(order_items.quantity) as tickets_sold'),
+                DB::raw('SUM(order_items.subtotal) as revenue')
+            )
+            ->groupBy('matches.id', 'matches.opponent', 'matches.match_date')
+            ->orderBy('revenue', 'desc')
+            ->get();
+
+        $orders = Order::with(['user', 'items.ticketCategory.match'])
+            ->paid()
+            ->whereBetween('paid_at', [$dateFrom, $dateTo . ' 23:59:59'])
+            ->orderBy('paid_at', 'asc')
+            ->get();
+
+        $totalRevenue = $orders->sum('total_amount');
+        $totalOrders = $orders->count();
+        $totalTicketsSold = $orders->flatMap->items->sum('quantity');
+
+        return view('admin.reports.pdf', compact(
+            'matchSales',
+            'orders',
+            'totalRevenue',
+            'totalOrders',
+            'totalTicketsSold',
+            'dateFrom',
+            'dateTo'
+        ));
+    }
 }

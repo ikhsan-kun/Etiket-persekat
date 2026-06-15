@@ -75,7 +75,8 @@
             <div class="bg-dark-900 border border-dark-800 rounded-3xl p-6 shadow-sm">
                 <h3 class="font-bold text-white mb-6 border-b border-dark-800 pb-3">Rincian Pembelian</h3>
                 
-                <div class="overflow-x-auto mb-6">
+                <!-- Desktop View -->
+                <div class="hidden md:block overflow-x-auto mb-6">
                     <table class="w-full text-sm text-left text-dark-300">
                         <thead class="text-xs text-dark-400 uppercase border-b border-dark-800">
                             <tr>
@@ -105,6 +106,29 @@
                             </tr>
                         </tfoot>
                     </table>
+                </div>
+
+                <!-- Mobile View -->
+                <div class="block md:hidden divide-y divide-dark-800/50">
+                    @foreach($order->items as $item)
+                    <div class="py-4 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-bold text-white text-base">{{ $item->ticketCategory->name }}</div>
+                                <div class="text-xs text-dark-400 mt-1">vs {{ $item->ticketCategory->match->opponent }}</div>
+                            </div>
+                            <div class="font-bold text-white">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="flex justify-between text-xs text-dark-400">
+                            <span>Harga: Rp {{ number_format($item->price, 0, ',', '.') }}</span>
+                            <span>Qty: {{ $item->quantity }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="pt-4 flex justify-between items-center">
+                        <span class="font-bold text-dark-300 text-sm">Total Keseluruhan:</span>
+                        <span class="font-bold text-primary-400 text-lg">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                    </div>
                 </div>
             </div>
 

@@ -124,7 +124,8 @@
                 <h3 class="text-lg font-bold text-white">Pesanan Terbaru</h3>
                 <a href="{{ route('admin.orders.index') }}" class="text-sm text-primary-400 hover:text-primary-300">Semua Pesanan &rarr;</a>
             </div>
-            <div class="overflow-x-auto">
+            <!-- Desktop View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left text-dark-300">
                     <thead class="text-xs text-dark-400 uppercase bg-dark-800/50">
                         <tr>
@@ -161,6 +162,34 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="block md:hidden divide-y divide-dark-800">
+                @forelse($recentOrders as $order)
+                    <div class="p-4 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <a href="{{ route('admin.orders.show', $order) }}" class="hover:text-primary-400 font-mono text-white font-bold block">{{ $order->order_number }}</a>
+                                <span class="text-xs text-dark-400">{{ $order->user->name }}</span>
+                            </div>
+                            <div>
+                                @if($order->status === 'paid')
+                                    <span class="badge bg-success-500/20 text-success-500">Lunas</span>
+                                @elseif($order->status === 'pending')
+                                    <span class="badge bg-warning-500/20 text-warning-500">Pending</span>
+                                @else
+                                    <span class="badge bg-dark-700/50 text-dark-300 text-xs">{{ ucfirst($order->status) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="text-xs text-dark-500 truncate">
+                            vs {{ $order->items->first()?->ticketCategory->match->opponent ?? '-' }}
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-6 text-center text-dark-400 text-sm">Belum ada pesanan masuk.</div>
+                @endforelse
             </div>
         </div>
 

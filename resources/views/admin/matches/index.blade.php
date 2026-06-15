@@ -29,7 +29,8 @@
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto">
+    <!-- Desktop View -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-sm text-left text-dark-300">
             <thead class="text-xs text-dark-400 uppercase bg-dark-800/50">
                 <tr>
@@ -93,6 +94,59 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile View -->
+    <div class="block md:hidden divide-y divide-dark-800">
+        @forelse($matches as $match)
+            <div class="p-4 space-y-3">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="font-bold text-white text-base block">vs {{ $match->opponent }}</span>
+                        <span class="text-xs text-dark-400">{{ $match->match_date->translatedFormat('d M Y, H:i') }} WIB</span>
+                    </div>
+                    <div>
+                        <span class="badge 
+                            {{ $match->status === 'published' ? 'bg-blue-500/20 text-blue-400' : '' }}
+                            {{ $match->status === 'live' ? 'bg-primary-500/20 text-primary-400' : '' }}
+                            {{ $match->status === 'finished' ? 'bg-success-500/20 text-success-500' : '' }}
+                            {{ $match->status === 'draft' ? 'bg-dark-700 text-dark-300 border border-dark-600' : '' }}
+                        ">
+                            {{ ucfirst($match->status) }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="text-sm flex justify-between items-center">
+                    <div class="text-dark-400">Lokasi: <span class="text-white">{{ $match->location }}</span></div>
+                    <div class="text-right">
+                        @php
+                            $totalQuota = $match->ticketCategories->sum('quota');
+                            $totalSold = $match->ticketCategories->sum('sold');
+                        @endphp
+                        <span class="text-xs text-dark-500 block">Terjual</span>
+                        <span class="font-medium text-white">{{ $totalSold }} <span class="text-dark-500 font-normal">/ {{ $totalQuota }}</span></span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-1">
+                    <a href="{{ route('admin.matches.edit', $match) }}" class="flex-1 btn-outline justify-center py-2 text-xs border-dark-600 hover:border-primary-500">
+                        Edit
+                    </a>
+                    @if($totalSold == 0)
+                        <form action="{{ route('admin.matches.destroy', $match) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pertandingan ini?');" class="flex-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full btn-outline justify-center py-2 text-xs border-dark-600 hover:border-primary-500 text-primary-400">
+                                Hapus
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="p-6 text-center text-dark-400 text-sm">Tidak ada data pertandingan.</div>
+        @endforelse
     </div>
 
     @if($matches->hasPages())

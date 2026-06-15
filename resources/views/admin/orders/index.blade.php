@@ -24,7 +24,8 @@
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto">
+    <!-- Desktop View -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-sm text-left text-dark-300">
             <thead class="text-xs text-dark-400 uppercase bg-dark-800/50">
                 <tr>
@@ -88,6 +89,63 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile View -->
+    <div class="block md:hidden divide-y divide-dark-800">
+        @forelse($orders as $order)
+            <div class="p-4 space-y-3">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="font-mono text-white font-bold block">{{ $order->order_number }}</span>
+                        <span class="text-xs text-dark-500">{{ $order->created_at->format('d/m/Y H:i') }}</span>
+                    </div>
+                    <div>
+                        @if($order->status === 'paid')
+                            <span class="badge bg-success-500/20 text-success-500">Lunas</span>
+                        @elseif($order->status === 'pending')
+                            <span class="badge bg-warning-500/20 text-warning-500">Pending</span>
+                        @elseif($order->status === 'failed')
+                            <span class="badge bg-primary-500/20 text-primary-400">Gagal</span>
+                        @else
+                            <span class="badge bg-dark-700/50 text-dark-300">Kadaluarsa</span>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="text-sm">
+                    <div class="text-dark-400">Pembeli: <span class="text-white font-medium">{{ $order->user->name }}</span></div>
+                    <div class="text-xs text-dark-500">{{ $order->user->email }}</div>
+                </div>
+
+                <div class="flex justify-between items-center pt-1">
+                    <div>
+                        @php
+                            $primaryMatch = $order->items->first()?->ticketCategory->match;
+                            $totalTickets = $order->items->sum('quantity');
+                        @endphp
+                        @if($primaryMatch)
+                            <div class="text-xs text-dark-300">vs {{ $primaryMatch->opponent }}</div>
+                            <div class="text-xs text-dark-500">{{ $totalTickets }} Tiket</div>
+                        @else
+                            -
+                        @endif
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-dark-500 block">Total</span>
+                        <span class="font-bold text-white">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <a href="{{ route('admin.orders.show', $order) }}" class="btn-outline w-full justify-center py-2 text-xs border-dark-600 hover:border-primary-500">
+                        Detail Pesanan
+                    </a>
+                </div>
+            </div>
+        @empty
+            <div class="p-6 text-center text-dark-400 text-sm">Tidak ada pesanan ditemukan.</div>
+        @endforelse
     </div>
 
     @if($orders->hasPages())

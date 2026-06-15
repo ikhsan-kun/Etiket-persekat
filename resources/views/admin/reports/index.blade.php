@@ -15,11 +15,15 @@
                 <label for="date_to" class="label-field text-xs">Sampai Tanggal</label>
                 <input type="date" id="date_to" name="date_to" value="{{ $dateTo }}" class="input-field py-2 text-sm" style="color-scheme: dark;">
             </div>
-            <div class="w-full md:w-auto flex gap-3">
-                <button type="submit" class="btn-primary py-2 px-6">Terapkan Filter</button>
-                <a href="{{ route('admin.reports.export-csv', ['date_from' => $dateFrom, 'date_to' => $dateTo]) }}" class="btn-secondary py-2 px-6">
-                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Export CSV
+            <div class="w-full md:w-auto flex flex-wrap gap-3">
+                <button type="submit" class="btn-primary py-2 px-6 flex-1 md:flex-initial">Terapkan Filter</button>
+                <a href="{{ route('admin.reports.export-csv', ['date_from' => $dateFrom, 'date_to' => $dateTo]) }}" class="btn-secondary py-2 px-6 flex-1 md:flex-initial justify-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    CSV
+                </a>
+                <a href="{{ route('admin.reports.export-pdf', ['date_from' => $dateFrom, 'date_to' => $dateTo]) }}" target="_blank" class="btn-secondary py-2 px-6 flex-1 md:flex-initial justify-center border-primary-500/30 hover:border-primary-500 text-primary-400 hover:text-white">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    PDF
                 </a>
             </div>
         </form>
@@ -55,7 +59,8 @@
         <div class="px-6 py-5 border-b border-dark-800">
             <h3 class="text-lg font-bold text-white">Rincian Penjualan per Pertandingan</h3>
         </div>
-        <div class="overflow-x-auto">
+        <!-- Desktop View -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-sm text-left text-dark-300">
                 <thead class="text-xs text-dark-400 uppercase bg-dark-800/50">
                     <tr>
@@ -82,6 +87,24 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="block md:hidden divide-y divide-dark-800">
+            @forelse($matchSales as $match)
+                <div class="p-4 space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="font-bold text-white text-base">vs {{ $match->opponent }}</span>
+                        <span class="font-bold text-primary-400">Rp {{ number_format($match->revenue, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-dark-400">
+                        <span>{{ date('d M Y, H:i', strtotime($match->match_date)) }} WIB</span>
+                        <span>{{ number_format($match->tickets_sold, 0, ',', '.') }} Tiket Terjual</span>
+                    </div>
+                </div>
+            @empty
+                <div class="p-6 text-center text-dark-400 text-sm">Tidak ada data penjualan lunas pada periode ini.</div>
+            @endforelse
         </div>
     </div>
 </div>
