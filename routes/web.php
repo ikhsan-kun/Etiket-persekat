@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/verify-report', [HomeController::class, 'verifyReport'])->name('report.verify');
 
 /*
 |--------------------------------------------------------------------------

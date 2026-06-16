@@ -314,6 +314,48 @@
         </tbody>
     </table>
 
+    @php
+        $signee = 'Leiskiroh';
+        $printedBy = Auth::user()->name;
+        $hash = hash_hmac(
+            'sha256',
+            $dateFrom . '|' . $dateTo . '|' . $totalRevenue . '|' . $totalTicketsSold . '|' . $totalOrders . '|' . $signee . '|' . $printedBy,
+            config('app.key')
+        );
+        $verifyUrl = route('report.verify', [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'total_revenue' => $totalRevenue,
+            'total_tickets' => $totalTicketsSold,
+            'total_orders' => $totalOrders,
+            'signee' => $signee,
+            'printed_by' => $printedBy,
+            'hash' => $hash
+        ]);
+        
+        // QR Code API endpoint
+        $qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($verifyUrl);
+    @endphp
+
+    <!-- Tanda Tangan Bendahara & QR Code Verifikasi -->
+    <div class="signature-container" style="margin-top: 50px; page-break-inside: avoid;">
+        <div style="float: right; width: 250px; text-align: center;">
+            <p style="margin-bottom: 5px; color: #334155;">Tegal, {{ now()->translatedFormat('d F Y') }}</p>
+            <p style="font-weight: 700; margin-top: 0; margin-bottom: 10px; color: #0f172a; uppercase; font-size: 12px; letter-spacing: 0.5px;">Bendahara Divisi Tiketing</p>
+            
+            <div style="margin: 10px auto; display: inline-block; padding: 6px; border: 1.5px solid #cbd5e1; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                <a href="{{ $verifyUrl }}" target="_blank" style="text-decoration: none;">
+                    <img src="{{ $qrCodeUrl }}" alt="QR Code Tanda Tangan" style="width: 100px; height: 100px; display: block; border: 0;">
+                </a>
+            </div>
+            
+            <p style="font-size: 9px; color: #64748b; margin-top: 0; margin-bottom: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">DOKUMEN TERVERIFIKASI DIGITAL</p>
+            <p style="font-weight: bold; text-decoration: underline; margin-top: 0; margin-bottom: 3px; color: #0f172a;">{{ $signee }}</p>
+            <p style="font-size: 11px; color: #64748b; margin: 0;">NIP. PERSEKAT-{{ date('Y') }}-{{ rand(1000, 9999) }}</p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
     <script>
         // Auto trigger print when loaded
         window.addEventListener('DOMContentLoaded', () => {

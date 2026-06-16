@@ -121,13 +121,13 @@
 <script>
 function matchEditForm() {
     return {
-        categories: @json($match->ticketCategories->map(fn($c) => [
+        categories: {!! json_encode($match->ticketCategories->map(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'price' => (float)$c->price,
             'quota' => $c->quota,
             'sold' => $c->sold
-        ])),
+        ])->toArray()) !!},
         
         addCategory() {
             this.categories.push({ id: '', name: '', price: '', quota: '', sold: 0 });

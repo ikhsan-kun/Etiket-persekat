@@ -46,4 +46,39 @@ class HomeController extends Controller
 
         return view('matches.show', compact('match'));
     }
+
+    /**
+     * Verify a digitally signed report document.
+     */
+    public function verifyReport(\Illuminate\Http\Request $request)
+    {
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
+        $totalRevenue = $request->get('total_revenue');
+        $totalTickets = $request->get('total_tickets');
+        $totalOrders = $request->get('total_orders');
+        $signee = $request->get('signee');
+        $printedBy = $request->get('printed_by');
+        $hash = $request->get('hash');
+
+        // Re-generate hash to verify authenticity
+        $calculatedHash = hash_hmac(
+            'sha256',
+            $dateFrom . '|' . $dateTo . '|' . $totalRevenue . '|' . $totalTickets . '|' . $totalOrders . '|' . $signee . '|' . $printedBy,
+            config('app.key')
+        );
+
+        $isValid = (!empty($hash) && $hash === $calculatedHash);
+
+        return view('reports.verify', compact(
+            'isValid',
+            'dateFrom',
+            'dateTo',
+            'totalRevenue',
+            'totalTickets',
+            'totalOrders',
+            'signee',
+            'printedBy'
+        ));
+    }
 }
