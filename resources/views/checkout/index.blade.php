@@ -12,7 +12,7 @@
         <div class="hidden sm:flex items-center gap-2 text-sm">
             <span class="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold">1</span>
             <span class="text-white font-medium">Pilih</span>
-            <div class="w-8 h-px bg-dark-600 mx-2"></div>
+            <div class="w-8 h-px bg-ark-600 mx-2"></div>
             <span class="w-8 h-8 rounded-full bg-dark-800 text-dark-400 flex items-center justify-center font-bold border border-dark-600">2</span>
             <span class="text-dark-400 font-medium">Bayar</span>
         </div>

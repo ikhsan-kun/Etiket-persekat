@@ -33,7 +33,7 @@
 
                 <div class="md:col-span-2">
                     <label for="location" class="label-field">Lokasi / Stadion <span class="text-primary-500">*</span></label>
-                    <input type="text" id="location" name="location" value="{{ old('location', 'Stadion Wijaya Kusuma, Tegal') }}" required class="input-field">
+                    <input type="text" id="location" name="location" value="{{ old('location', 'Stadion Trisanja, Slawi') }}" required class="input-field">
                     @error('location') <span class="text-primary-400 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 

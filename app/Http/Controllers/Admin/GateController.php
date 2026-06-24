@@ -39,7 +39,7 @@ class GateController extends Controller
         if ($ticket->is_used) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tiket sudah digunakan pada ' . $ticket->used_at->format('d M Y H:i'),
+                'message' => 'Tiket sudah digunakan pada ' . ($ticket->used_at?->format('d M Y H:i') ?? 'waktu tidak diketahui'),
                 'ticket' => $this->formatTicketData($ticket),
             ], 422);
         }

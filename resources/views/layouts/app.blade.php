@@ -180,11 +180,23 @@
                         <div>
                             <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Kontak</h4>
                             <ul class="space-y-2 text-sm text-dark-400">
-                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Stadion Wijaya Kusuma, Tegal</li>
+                                <li class="flex items-center gap-2"><svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Stadion Trisanja, Slawi</li>
                                 <li class="flex items-center gap-2"><svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> info@persekat.id</li>
                             </ul>
                         </div>
                     </div>
+                    {{-- UHN Partner --}}
+                    <div class="border-t border-dark-800 pt-6 mb-6 flex flex-col items-center gap-3">
+                        <p class="text-xs text-dark-500 uppercase tracking-widest">Didukung oleh</p>
+                        <div class="flex items-center gap-3">
+                            <img src="{{ asset('images/uhn.png') }}" alt="UHN Logo" class="h-10 w-10 object-contain rounded-full bg-white/10 p-0.5">
+                            <div>
+                                <span class="block text-sm font-bold text-white leading-tight">Universitas Harkat Negeri</span>
+                                <span class="block text-[10px] text-dark-400 uppercase tracking-widest">UHN</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="border-t border-dark-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <span class="text-xs text-dark-500">&copy; {{ date('Y') }} Persekat Tegal. All rights reserved.</span>
                         <div class="flex gap-4">
