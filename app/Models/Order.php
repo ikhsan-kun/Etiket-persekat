@@ -108,4 +108,33 @@ class Order extends Model
     {
         return $query->where('status', 'paid');
     }
+
+    /**
+     * Generate e-tickets for this paid order if they do not exist already.
+     */
+    public function generateETickets(): void
+    {
+        if ($this->eTickets()->exists()) {
+            return;
+        }
+
+        $this->load('items.ticketCategory');
+
+        foreach ($this->items as $item) {
+            for ($i = 0; $i < $item->quantity; $i++) {
+                $ticketCode = ETicket::generateTicketCode();
+
+                ETicket::create([
+                    'order_id'      => $this->id,
+                    'order_item_id' => $item->id,
+                    'ticket_code'   => $ticketCode,
+                    'qr_code_data'  => json_encode([
+                        'code'     => $ticketCode,
+                        'order'    => $this->order_number,
+                        'match_id' => $item->ticketCategory->match_id ?? null,
+                    ]),
+                ]);
+            }
+        }
+    }
 }

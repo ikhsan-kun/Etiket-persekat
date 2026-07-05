@@ -25,10 +25,15 @@ class MyTicketController extends Controller
     /**
      * Show order detail with e-tickets.
      */
-    public function show(Order $order)
+    public function show(Order $order, \App\Services\MidtransService $midtransService)
     {
         if ($order->user_id !== Auth::id()) {
             abort(403);
+        }
+
+        // Sync payment status with Midtrans if not paid yet
+        if (!$order->isPaid() && $order->midtrans_snap_token) {
+            $midtransService->checkAndSyncStatus($order);
         }
 
         $order->load(['items.ticketCategory.match', 'eTickets.orderItem.ticketCategory']);

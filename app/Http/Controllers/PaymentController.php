@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
+    protected $midtransService;
+
+    public function __construct(\App\Services\MidtransService $midtransService)
+    {
+        $this->midtransService = $midtransService;
+    }
+
     /**
      * Show payment page for an order.
      */
@@ -20,9 +27,14 @@ class PaymentController extends Controller
             abort(403);
         }
 
+        // Sync status with Midtrans in case webhook was missed/delayed
+        if (!$order->isPaid() && $order->midtrans_snap_token) {
+            $this->midtransService->checkAndSyncStatus($order);
+        }
+
         if ($order->isPaid()) {
             return redirect()->route('my-tickets.show', $order)
-                ->with('info', 'Pesanan ini sudah dibayar.');
+                ->with('success', 'Pembayaran berhasil! E-Ticket Anda sudah tersedia.');
         }
 
         if ($order->isExpired()) {
@@ -34,74 +46,13 @@ class PaymentController extends Controller
 
         // Generate Midtrans Snap token if not exists
         if (!$order->midtrans_snap_token) {
-            $snapToken = $this->getSnapToken($order);
+            $snapToken = $this->midtransService->getSnapToken($order);
             if ($snapToken) {
                 $order->update(['midtrans_snap_token' => $snapToken]);
             }
         }
 
         return view('payment.show', compact('order'));
-    }
-
-    /**
-     * Generate Midtrans Snap token.
-     */
-    private function getSnapToken(Order $order): ?string
-    {
-        $serverKey = config('midtrans.server_key');
-
-        if (empty($serverKey)) {
-            // Return null for dummy mode
-            return null;
-        }
-
-        try {
-            $order->load('user', 'items.ticketCategory');
-
-            $items = $order->items->map(function ($item) {
-                return [
-                    'id' => 'TKT-' . $item->ticket_category_id,
-                    'price' => (int) $item->price,
-                    'quantity' => $item->quantity,
-                    'name' => $item->ticketCategory->name,
-                ];
-            })->toArray();
-
-            $params = [
-                'transaction_details' => [
-                    'order_id' => $order->order_number,
-                    'gross_amount' => (int) $order->total_amount,
-                ],
-                'customer_details' => [
-                    'first_name' => $order->user->name,
-                    'email' => $order->user->email,
-                    'phone' => $order->user->phone ?? '',
-                ],
-                'item_details' => $items,
-                'expiry' => [
-                    'start_time' => $order->created_at->format('Y-m-d H:i:s O'),
-                    'unit' => 'minutes',
-                    'duration' => (int) config('app.ticket_expiry_minutes', 30),
-                ],
-            ];
-
-            $apiUrl = config('midtrans.is_production')
-                ? 'https://app.midtrans.com/snap/v1/transactions'
-                : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
-
-            $response = Http::withBasicAuth($serverKey, '')
-                ->post($apiUrl, $params);
-
-            if ($response->successful()) {
-                return $response->json('token');
-            }
-
-            Log::error('Midtrans Snap error', ['response' => $response->body()]);
-            return null;
-        } catch (\Exception $e) {
-            Log::error('Midtrans Snap exception', ['error' => $e->getMessage()]);
-            return null;
-        }
     }
 
     /**
@@ -131,34 +82,10 @@ class PaymentController extends Controller
         ]);
 
         // Generate e-tickets
-        $this->generateETickets($order);
+        $order->generateETickets();
 
         return redirect()->route('my-tickets.show', $order)
             ->with('success', 'Pembayaran berhasil! E-Ticket Anda sudah tersedia.');
     }
-
-    /**
-     * Generate e-tickets for paid order.
-     */
-    private function generateETickets(Order $order): void
-    {
-        $order->load('items.ticketCategory');
-
-        foreach ($order->items as $item) {
-            for ($i = 0; $i < $item->quantity; $i++) {
-                $ticketCode = ETicket::generateTicketCode();
-
-                ETicket::create([
-                    'order_id'      => $order->id,
-                    'order_item_id' => $item->id,
-                    'ticket_code'   => $ticketCode,
-                    'qr_code_data'  => json_encode([
-                        'code'     => $ticketCode,
-                        'order'    => $order->order_number,
-                        'match_id' => $item->ticketCategory->match_id ?? null,
-                    ]),
-                ]);
-            }
-        }
-    }
 }
+

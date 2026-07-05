@@ -51,7 +51,7 @@ class WebhookController extends Controller
                     ]);
 
                     // Generate e-tickets
-                    $this->generateETickets($order);
+                    $order->generateETickets();
                 }
             }
         } elseif (in_array($transactionStatus, ['deny', 'cancel'])) {
@@ -111,29 +111,5 @@ class WebhookController extends Controller
             }
         }
     }
-
-    /**
-     * Generate e-tickets for paid order.
-     */
-    private function generateETickets(Order $order): void
-    {
-        $order->load('items.ticketCategory');
-
-        foreach ($order->items as $item) {
-            for ($i = 0; $i < $item->quantity; $i++) {
-                $ticketCode = ETicket::generateTicketCode();
-
-                ETicket::create([
-                    'order_id'      => $order->id,
-                    'order_item_id' => $item->id,
-                    'ticket_code'   => $ticketCode,
-                    'qr_code_data'  => json_encode([
-                        'code'     => $ticketCode,
-                        'order'    => $order->order_number,
-                        'match_id' => $item->ticketCategory->match_id ?? null,
-                    ]),
-                ]);
-            }
-        }
-    }
 }
+
