@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\ETicket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
@@ -69,10 +70,13 @@ class WebhookController extends Controller
      */
     private function handleFailedPayment(Order $order): void
     {
-        if ($order->status === 'pending') {
-            $order->update(['status' => 'failed']);
-            $this->restoreQuota($order);
-        }
+        DB::transaction(function () use ($order) {
+            $lockedOrder = Order::where('id', $order->id)->lockForUpdate()->first();
+            if ($lockedOrder && $lockedOrder->status === 'pending') {
+                $lockedOrder->update(['status' => 'failed']);
+                $this->restoreQuota($lockedOrder);
+            }
+        });
     }
 
     /**
@@ -80,10 +84,13 @@ class WebhookController extends Controller
      */
     private function handleExpiredPayment(Order $order): void
     {
-        if ($order->status === 'pending') {
-            $order->update(['status' => 'expired']);
-            $this->restoreQuota($order);
-        }
+        DB::transaction(function () use ($order) {
+            $lockedOrder = Order::where('id', $order->id)->lockForUpdate()->first();
+            if ($lockedOrder && $lockedOrder->status === 'pending') {
+                $lockedOrder->update(['status' => 'expired']);
+                $this->restoreQuota($lockedOrder);
+            }
+        });
     }
 
     /**
@@ -94,7 +101,14 @@ class WebhookController extends Controller
         $order->load('items.ticketCategory');
 
         foreach ($order->items as $item) {
-            $item->ticketCategory->decrement('sold', $item->quantity);
+            if ($item->ticketCategory) {
+                // Pessimistic lock the ticket category to update the sold field safely
+                $category = $item->ticketCategory()->lockForUpdate()->first();
+                if ($category) {
+                    $category->sold = max(0, $category->sold - $item->quantity);
+                    $category->save();
+                }
+            }
         }
     }
 

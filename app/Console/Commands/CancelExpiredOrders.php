@@ -54,7 +54,10 @@ class CancelExpiredOrders extends Command
                             if ($item->ticketCategory) {
                                 // Pessimistic lock the ticket category to update the sold field safely
                                 $category = $item->ticketCategory()->lockForUpdate()->first();
-                                $category->decrement('sold', $item->quantity);
+                                if ($category) {
+                                    $category->sold = max(0, $category->sold - $item->quantity);
+                                    $category->save();
+                                }
                             }
                         }
 
